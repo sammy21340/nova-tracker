@@ -1,0 +1,293 @@
+/* ============================================================
+   Nova — Portfolio Tracker
+   Same minimal system as the rest of the site (tokens sourced
+   from login-minimal.css). Covers both Portfolio.jsx and the
+   AddHoldingForm it renders, since the form only ever appears
+   inside this page.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..600&display=swap');
+
+.portfolio-page {
+  --nl-canvas: #F7F5F2;
+  --nl-surface: #FFFFFF;
+  --nl-border: #E6E4DF;
+  --nl-ink: #0F0D0B;
+  --nl-ink-soft: #2B2723;
+  --nl-muted: #71706B;
+  --nl-error: #B3261E;
+  --nl-up: #4E7A5C;
+
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--nl-canvas);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.portfolio-page h1 {
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  color: var(--nl-ink);
+  margin: 0;
+}
+
+.portfolio-page .total-value {
+  padding: 32px 28px;
+  border-radius: 20px;
+  background: var(--nl-surface);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(78, 50, 23, 0.06),
+    0 0 0 1px rgba(78, 50, 23, 0.045),
+    0 4px 16px rgba(78, 50, 23, 0.05);
+  margin: 0;
+}
+
+.total-value-amount {
+  font-size: 2.25rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--nl-ink);
+  margin: 0;
+}
+
+.total-value-pl {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 8px 0 0;
+}
+
+.allocation-bar-wrap {
+  margin-top: 14px;
+}
+
+.allocation-bar {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.allocation-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  color: var(--nl-ink);
+}
+
+.allocation-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.allocation-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.portfolio-page .loading-text,
+.portfolio-page .page-error {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.portfolio-page .loading-text {
+  color: var(--nl-muted);
+}
+
+.portfolio-page .page-error {
+  color: var(--nl-error);
+}
+
+/* ============================================================
+   Add-holding form
+   ============================================================ */
+
+.add-holding-form {
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--nl-surface);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(78, 50, 23, 0.06),
+    0 0 0 1px rgba(78, 50, 23, 0.045),
+    0 4px 16px rgba(78, 50, 23, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.add-holding-form h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--nl-ink);
+  margin: 0;
+}
+
+.add-holding-form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.add-holding-form .form-row label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--nl-ink);
+}
+
+.add-holding-form select,
+.add-holding-form input {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--nl-ink);
+  background: var(--nl-canvas);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--nl-border);
+  transition: box-shadow 0.15s ease;
+}
+
+.add-holding-form select:focus-visible,
+.add-holding-form input:focus-visible {
+  box-shadow: inset 0 0 0 1.5px var(--nl-ink);
+}
+
+.add-holding-form .error {
+  color: var(--nl-error);
+  font-size: 0.8rem;
+}
+
+.add-holding-form button {
+  padding: 13px;
+  border: none;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #FDFCFA;
+  background: var(--nl-ink);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.add-holding-form button:hover {
+  background: var(--nl-ink-soft);
+}
+
+.add-holding-form button:focus-visible {
+  outline: 2px solid var(--nl-ink);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Holdings list
+   ============================================================ */
+
+.portfolio-page ul {
+  list-style: none;
+  margin: 0;
+  padding: 8px 24px;
+  border-radius: 20px;
+  background: var(--nl-surface);
+  box-shadow:
+    inset 0 0 0 0.5px rgba(78, 50, 23, 0.06),
+    0 0 0 1px rgba(78, 50, 23, 0.045),
+    0 4px 16px rgba(78, 50, 23, 0.05);
+}
+
+.portfolio-page li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 60px 16px 0;
+  font-size: 0.9rem;
+  color: var(--nl-ink);
+  border-bottom: 1px solid var(--nl-border);
+}
+
+.portfolio-page li:last-child {
+  border-bottom: none;
+}
+
+.holding-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.holding-symbol {
+  font-weight: 400;
+  color: var(--nl-muted);
+  font-size: 0.8rem;
+}
+
+.holding-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+  color: var(--nl-muted);
+}
+
+.holding-up {
+  color: var(--nl-up);
+}
+
+.holding-down {
+  color: var(--nl-error);
+}
+
+.portfolio-page li button {
+  position: absolute;
+  top: 16px;
+  right: 0;
+  border: none;
+  background: transparent;
+  color: var(--nl-muted);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 9999px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.portfolio-page li button:hover {
+  color: var(--nl-error);
+  background: rgba(179, 38, 30, 0.08);
+}
+
+.portfolio-page li button:focus-visible {
+  outline: 2px solid var(--nl-ink);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .portfolio-page {
+    padding: 32px 16px;
+  }
+
+  .portfolio-page .total-value {
+    padding: 24px 20px;
+  }
+
+  .total-value-amount {
+    font-size: 1.75rem;
+  }
+}

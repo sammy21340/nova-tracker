@@ -1,5 +1,6 @@
 import { usePortfolio } from "../hooks/usePortfolio";
 import AddHoldingForm from "./AddHoldingForm";
+import HoldingRow from "./HoldingRow";
 import "../styles/Portfolio.css";
 
 // Keyed to coinId, not array position — so a coin's color stays
@@ -23,6 +24,7 @@ function Portfolio() {
     error,
     addHolding,
     removeHolding,
+    updateHolding,
   } = usePortfolio();
 
   return (
@@ -79,37 +81,12 @@ function Portfolio() {
 
       <ul>
         {holdings.map((h) => (
-          <li key={h.id}>
-            <div className="holding-main">
-              <span className="holding-name">
-                {h.name} <span className="holding-symbol">{h.symbol}</span>
-              </span>
-              <span className="holding-value">
-                {h.value !== null ? `$${h.value.toFixed(2)}` : "—"}
-              </span>
-            </div>
-
-            <div className="holding-details">
-              <span>
-                {h.quantity} {h.symbol} · {h.allocationPct.toFixed(1)}%
-              </span>
-
-              {h.change24h !== null && (
-                <span className={h.change24h >= 0 ? "holding-up" : "holding-down"}>
-                  {h.change24h >= 0 ? "+" : ""}
-                  {h.change24h.toFixed(2)}% (24h)
-                </span>
-              )}
-
-              {h.profitLoss !== null && (
-                <span className={h.profitLoss >= 0 ? "holding-up" : "holding-down"}>
-                  {h.profitLoss >= 0 ? "+" : ""}${h.profitLoss.toFixed(2)} P/L
-                </span>
-              )}
-            </div>
-
-            <button onClick={() => removeHolding(h.id)}>Remove</button>
-          </li>
+          <HoldingRow
+            key={h.id}
+            holding={h}
+            onRemove={removeHolding}
+            onUpdate={updateHolding}
+          />
         ))}
       </ul>
     </div>

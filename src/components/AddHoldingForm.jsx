@@ -1,21 +1,19 @@
 import { useState } from "react";
-
-const AVAILABLE_COINS = [
-  { coinId: "bitcoin", symbol: "BTC", name: "Bitcoin" },
-  { coinId: "ethereum", symbol: "ETH", name: "Ethereum" },
-  { coinId: "solana", symbol: "SOL", name: "Solana" },
-  { coinId: "ripple", symbol: "XRP", name: "XRP" },
-  { coinId: "tether", symbol: "USDT", name: "Tether" },
-];
+import CoinSearch from "./CoinSearch";
 
 function AddHoldingForm({ onAdd }) {
-  const [coinId, setCoinId] = useState(AVAILABLE_COINS[0].coinId);
+  const [coin, setCoin] = useState(null); // { coinId, symbol, name } once picked
   const [quantity, setQuantity] = useState("");
   const [costBasis, setCostBasis] = useState("");
   const [error, setError] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    if (!coin) {
+      setError("Search for a coin and pick one first.");
+      return;
+    }
 
     const numericQuantity = Number(quantity);
 
@@ -24,16 +22,15 @@ function AddHoldingForm({ onAdd }) {
       return;
     }
 
-    const selectedCoin = AVAILABLE_COINS.find((c) => c.coinId === coinId);
-
     onAdd({
-      coinId: selectedCoin.coinId,
-      symbol: selectedCoin.symbol,
-      name: selectedCoin.name,
+      coinId: coin.coinId,
+      symbol: coin.symbol,
+      name: coin.name,
       quantity: numericQuantity,
       costBasis: costBasis ? Number(costBasis) : null,
     });
 
+    setCoin(null);
     setQuantity("");
     setCostBasis("");
     setError("");
@@ -45,13 +42,27 @@ function AddHoldingForm({ onAdd }) {
 
       <div className="form-row">
         <label>Coin</label>
-        <select value={coinId} onChange={(e) => setCoinId(e.target.value)}>
-          {AVAILABLE_COINS.map((coin) => (
-            <option key={coin.coinId} value={coin.coinId}>
-              {coin.name} ({coin.symbol})
-            </option>
-          ))}
-        </select>
+        {coin ? (
+          <div className="selected-coin">
+            <span>
+              {coin.name} <span className="selected-coin-symbol">{coin.symbol}</span>
+            </span>
+            <button
+              type="button"
+              className="link-button"
+              onClick={() => setCoin(null)}
+            >
+              Change
+            </button>
+          </div>
+        ) : (
+          <CoinSearch
+            onSelect={(picked) => {
+              setCoin(picked);
+              setError("");
+            }}
+          />
+        )}
       </div>
 
       <div className="form-row">
@@ -80,7 +91,9 @@ function AddHoldingForm({ onAdd }) {
 
       {error && <small className="error">{error}</small>}
 
-      <button type="submit">Add Holding</button>
+      <button type="submit" className="add-holding-submit">
+        Add Holding
+      </button>
     </form>
   );
 }

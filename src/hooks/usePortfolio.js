@@ -133,14 +133,15 @@ export function usePortfolio() {
   const totalProfitLossPct =
     totalProfitLoss !== null && totalCost ? (totalProfitLoss / totalCost) * 100 : null;
 
+  // Every holding stays in the list, even if CoinGecko has no price for it —
+  // otherwise it would silently vanish from the screen (and be impossible to remove)
   const allocation = useMemo(
     () =>
-      enriched
-        .filter((h) => h.value !== null)
-        .map((h) => ({
-          ...h,
-          allocationPct: totalValue ? (h.value / totalValue) * 100 : 0,
-        })),
+      enriched.map((h) => ({
+        ...h,
+        allocationPct:
+          totalValue && h.value !== null ? (h.value / totalValue) * 100 : 0,
+      })),
     [enriched, totalValue]
   );
 

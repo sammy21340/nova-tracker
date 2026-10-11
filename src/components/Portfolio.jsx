@@ -5,6 +5,7 @@ import "../styles/Portfolio.css";
 
 // Keyed to coinId, not array position — so a coin's color stays
 // the same regardless of what order holdings were added in.
+// The five original coins keep their hand-picked colors.
 const COIN_COLORS = {
   bitcoin: "#0F0D0B",
   ethereum: "#C98A4B",
@@ -12,7 +13,21 @@ const COIN_COLORS = {
   ripple: "#7A8CA3",
   tether: "#71706B",
 };
-const FALLBACK_COLOR = "#A9A79F";
+
+// Any other coin takes the next unused color in this list, in the order the
+// coins appear — so two different coins never share a color (until the list
+// runs out). The five coins above never change; extras can shift if you
+// remove an earlier one.
+const EXTRA_COLORS = [
+  "#8B6F8E",
+  "#B36B4F",
+  "#5E8C8A",
+  "#A89B5C",
+  "#6B7A99",
+  "#9A6B7A",
+  "#7F9A6B",
+  "#8C7A66",
+];
 
 function Portfolio() {
   const {
@@ -26,6 +41,14 @@ function Portfolio() {
     removeHolding,
     updateHolding,
   } = usePortfolio();
+
+  const colorById = {};
+  let extraIndex = 0;
+  for (const h of holdings) {
+    if (colorById[h.coinId]) continue;
+    colorById[h.coinId] =
+      COIN_COLORS[h.coinId] ?? EXTRA_COLORS[extraIndex++ % EXTRA_COLORS.length];
+  }
 
   return (
     <div className="portfolio-page">
@@ -52,7 +75,7 @@ function Portfolio() {
                   key={h.id}
                   style={{
                     width: `${h.allocationPct}%`,
-                    background: COIN_COLORS[h.coinId] || FALLBACK_COLOR,
+                    background: colorById[h.coinId],
                   }}
                 />
               ))}
@@ -63,7 +86,7 @@ function Portfolio() {
                   <span
                     className="allocation-swatch"
                     style={{
-                      background: COIN_COLORS[h.coinId] || FALLBACK_COLOR,
+                      background: colorById[h.coinId],
                     }}
                   />
                   {h.name} {h.allocationPct.toFixed(0)}%

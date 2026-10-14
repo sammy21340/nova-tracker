@@ -48,6 +48,58 @@
   margin: 0;
 }
 
+.portfolio-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.currency-toggle {
+  display: flex;
+  padding: 3px;
+  border-radius: 9999px;
+  background: var(--nl-surface);
+  box-shadow: inset 0 0 0 1px var(--nl-border);
+}
+
+.currency-toggle button {
+  border: none;
+  background: transparent;
+  color: var(--nl-muted);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.currency-toggle button[aria-pressed="true"] {
+  background: var(--nl-ink);
+  color: #FDFCFA;
+}
+
+.currency-toggle button:focus-visible {
+  outline: 2px solid var(--nl-ink);
+  outline-offset: 2px;
+}
+
+.total-value-label {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--nl-muted);
+}
+
+.currency-note {
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--nl-muted);
+}
+
 .total-value-amount {
   font-size: 2.25rem;
   font-weight: 300;
@@ -401,7 +453,7 @@
 }
 
 .holding-edit input {
-  width: 110px;
+  width: 130px;
   font-family: inherit;
   font-size: 0.85rem;
   color: var(--nl-ink);

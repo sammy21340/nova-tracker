@@ -1,6 +1,7 @@
 import { usePortfolio } from "../hooks/usePortfolio";
 import AddHoldingForm from "./AddHoldingForm";
 import HoldingRow from "./HoldingRow";
+import { CURRENCIES, formatMoney } from "../Utils/format";
 import "../styles/Portfolio.css";
 
 // Keyed to coinId, not array position — so a coin's color stays
@@ -35,6 +36,8 @@ function Portfolio() {
     totalValue,
     totalProfitLoss,
     totalProfitLossPct,
+    currency,
+    setCurrency,
     loading,
     error,
     addHolding,
@@ -52,18 +55,43 @@ function Portfolio() {
 
   return (
     <div className="portfolio-page">
-      <h1>Your Portfolio</h1>
+      <div className="portfolio-header">
+        <h1>Your Portfolio</h1>
+        <div className="currency-toggle" role="group" aria-label="Display currency">
+          {CURRENCIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              aria-pressed={currency === c}
+              onClick={() => setCurrency(c)}
+            >
+              {c.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="total-value">
-        <p className="total-value-amount">Total Value: ${totalValue.toFixed(2)}</p>
+        <p className="total-value-label">Total value</p>
+        <p className="total-value-amount">{formatMoney(totalValue, currency)}</p>
+
         {totalProfitLoss !== null && (
           <p
             className={`total-value-pl ${
               totalProfitLoss >= 0 ? "holding-up" : "holding-down"
             }`}
           >
-            {totalProfitLoss >= 0 ? "+" : ""}${totalProfitLoss.toFixed(2)} (
-            {totalProfitLossPct >= 0 ? "+" : ""}
-            {totalProfitLossPct.toFixed(1)}%) overall
+            {formatMoney(totalProfitLoss, currency, { signed: true })}
+            {totalProfitLossPct !== null &&
+              ` (${totalProfitLossPct >= 0 ? "+" : ""}${totalProfitLossPct.toFixed(1)}%)`}{" "}
+            overall
+          </p>
+        )}
+
+        {currency === "ngn" && (
+          <p className="currency-note">
+            Naira values use CoinGecko's USD/NGN rate, which can differ from the
+            rate you'd get on P2P platforms.
           </p>
         )}
 
@@ -97,7 +125,7 @@ function Portfolio() {
         )}
       </div>
 
-      <AddHoldingForm onAdd={addHolding} />
+      <AddHoldingForm onAdd={addHolding} currency={currency} />
 
       {loading && <p className="loading-text">Loading prices...</p>}
       {error && <p className="page-error">{error}</p>}
@@ -107,6 +135,7 @@ function Portfolio() {
           <HoldingRow
             key={h.id}
             holding={h}
+            currency={currency}
             onRemove={removeHolding}
             onUpdate={updateHolding}
           />

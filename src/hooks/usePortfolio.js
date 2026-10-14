@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { enrichHoldings, summarize, withAllocation } from "../utils/portfolioMath";
+import { CURRENCIES } from "../utils/format";
 
 // No backend for v1: holdings are just a local list of {coin, quantity,
 // optional cost basis} — there's no account to protect, so localStorage
 // here is a completely different risk than the auth-token case in Login.jsx.
 
 const STORAGE_KEY = "portfolio-holdings";
+const CURRENCY_KEY = "portfolio-currency";
 const REFRESH_INTERVAL_MS = 60_000; // CoinGecko's free, no-key tier is comfortable with one batched call/min
 
 function loadHoldings() {
@@ -13,6 +16,15 @@ function loadHoldings() {
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
+  }
+}
+
+function loadCurrency() {
+  try {
+    const saved = localStorage.getItem(CURRENCY_KEY);
+    return CURRENCIES.includes(saved) ? saved : "usd";
+  } catch {
+    return "usd";
   }
 }
 
@@ -27,6 +39,7 @@ function saveHoldings(holdings) {
 
 export function usePortfolio() {
   const [holdings, setHoldings] = useState(loadHoldings);
+  const [currency, setCurrency] = useState(loadCurrency);
   const [prices, setPrices] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,6 +47,14 @@ export function usePortfolio() {
   useEffect(() => {
     saveHoldings(holdings);
   }, [holdings]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CURRENCY_KEY, currency);
+    } catch {
+      // Same as holdings: not worth crashing over
+    }
+  }, [currency]);
 
   const addHolding = useCallback((holding) => {
     setHoldings((prev) => [
@@ -45,6 +66,7 @@ export function usePortfolio() {
         name: holding.name, // e.g. "Bitcoin"
         quantity: Number(holding.quantity),
         costBasis: holding.costBasis ? Number(holding.costBasis) : null, // price paid per unit, optional
+        costCurrency: holding.costCurrency ?? "usd", // currency the cost was entered in
       },
     ]);
   }, []);
@@ -73,7 +95,7 @@ export function usePortfolio() {
       try {
         const ids = [...new Set(holdings.map((h) => h.coinId))].join(",");
         const response = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`
+          `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=${CURRENCIES.join(",")}&include_24hr_change=true`
         );
 
         if (!response.ok) {
@@ -105,43 +127,19 @@ export function usePortfolio() {
     };
   }, [holdings]);
 
-  // Derived values — this is the actual "portfolio" part
-  const enriched = useMemo(() => {
-    return holdings.map((h) => {
-      const price = prices[h.coinId]?.usd ?? null;
-      const change24h = prices[h.coinId]?.usd_24h_change ?? null;
-      const value = price !== null ? price * h.quantity : null;
-      const costTotal = h.costBasis !== null ? h.costBasis * h.quantity : null;
-      const profitLoss = value !== null && costTotal !== null ? value - costTotal : null;
-      const profitLossPct = profitLoss !== null && costTotal ? (profitLoss / costTotal) * 100 : null;
+  // Derived values — the maths lives in utils/portfolioMath.js
+  const enriched = useMemo(
+    () => enrichHoldings(holdings, prices, currency),
+    [holdings, prices, currency]
+  );
 
-      return { ...h, price, change24h, value, profitLoss, profitLossPct };
-    });
-  }, [holdings, prices]);
-
-  const totalValue = useMemo(
-    () => enriched.reduce((sum, h) => sum + (h.value ?? 0), 0),
+  const { totalValue, totalProfitLoss, totalProfitLossPct } = useMemo(
+    () => summarize(enriched),
     [enriched]
   );
 
-  const totalCost = useMemo(
-    () => enriched.reduce((sum, h) => sum + (h.costBasis ? h.costBasis * h.quantity : 0), 0),
-    [enriched]
-  );
-
-  const totalProfitLoss = totalCost ? totalValue - totalCost : null;
-  const totalProfitLossPct =
-    totalProfitLoss !== null && totalCost ? (totalProfitLoss / totalCost) * 100 : null;
-
-  // Every holding stays in the list, even if CoinGecko has no price for it —
-  // otherwise it would silently vanish from the screen (and be impossible to remove)
   const allocation = useMemo(
-    () =>
-      enriched.map((h) => ({
-        ...h,
-        allocationPct:
-          totalValue && h.value !== null ? (h.value / totalValue) * 100 : 0,
-      })),
+    () => withAllocation(enriched, totalValue),
     [enriched, totalValue]
   );
 
@@ -150,6 +148,8 @@ export function usePortfolio() {
     totalValue,
     totalProfitLoss,
     totalProfitLossPct,
+    currency,
+    setCurrency,
     loading,
     error,
     addHolding,

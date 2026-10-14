@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CoinSearch from "./CoinSearch";
 
-function AddHoldingForm({ onAdd }) {
+function AddHoldingForm({ onAdd, currency }) {
   const [coin, setCoin] = useState(null); // { coinId, symbol, name } once picked
   const [quantity, setQuantity] = useState("");
   const [costBasis, setCostBasis] = useState("");
@@ -28,6 +28,7 @@ function AddHoldingForm({ onAdd }) {
       name: coin.name,
       quantity: numericQuantity,
       costBasis: costBasis ? Number(costBasis) : null,
+      costCurrency: currency, // remember which currency the cost was entered in
     });
 
     setCoin(null);
@@ -85,7 +86,7 @@ function AddHoldingForm({ onAdd }) {
           min="0"
           value={costBasis}
           onChange={(e) => setCostBasis(e.target.value)}
-          placeholder="What you paid, in USD"
+          placeholder={`What you paid, in ${currency.toUpperCase()}`}
         />
       </div>
 

@@ -1,12 +1,18 @@
 import { useState } from "react";
+import { formatMoney } from "../Utils/format";
 
 // One row in the holdings list. It's its own component because each row
 // needs its own "am I being edited?" state — and hooks like useState can't
 // be called inside a .map() callback, only at the top of a component.
-function HoldingRow({ holding: h, onRemove, onUpdate }) {
+function HoldingRow({ holding: h, currency, onRemove, onUpdate }) {
   const [isEditing, setIsEditing] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [costBasis, setCostBasis] = useState("");
+
+  // The cost field stays in the currency it was originally entered in, or in
+  // the current display currency if this holding has no cost yet.
+  const hasCost = h.costBasis !== null && h.costBasis !== undefined;
+  const costCurrency = hasCost ? (h.costCurrency ?? "usd") : currency;
 
   function startEditing() {
     // Start the inputs from the holding's current values
@@ -21,6 +27,7 @@ function HoldingRow({ holding: h, onRemove, onUpdate }) {
     onUpdate(h.id, {
       quantity: Number(quantity),
       costBasis: costBasis ? Number(costBasis) : null,
+      costCurrency,
     });
     setIsEditing(false);
   }
@@ -34,7 +41,7 @@ function HoldingRow({ holding: h, onRemove, onUpdate }) {
           {h.name} <span className="holding-symbol">{h.symbol}</span>
         </span>
         <span className="holding-value">
-          {h.value !== null ? `$${h.value.toFixed(2)}` : "—"}
+          {h.value !== null ? formatMoney(h.value, currency) : "—"}
         </span>
       </div>
 
@@ -55,8 +62,8 @@ function HoldingRow({ holding: h, onRemove, onUpdate }) {
             min="0"
             value={costBasis}
             onChange={(e) => setCostBasis(e.target.value)}
-            placeholder="Cost per coin"
-            aria-label="Cost per coin"
+            placeholder={`Cost each (${costCurrency.toUpperCase()})`}
+            aria-label={`Cost per coin in ${costCurrency.toUpperCase()}`}
           />
           <button type="submit" disabled={!isValid}>
             Save
@@ -80,7 +87,7 @@ function HoldingRow({ holding: h, onRemove, onUpdate }) {
 
           {h.profitLoss !== null && (
             <span className={h.profitLoss >= 0 ? "holding-up" : "holding-down"}>
-              {h.profitLoss >= 0 ? "+" : ""}${h.profitLoss.toFixed(2)} P/L
+              {formatMoney(h.profitLoss, currency, { signed: true })} P/L
             </span>
           )}
 

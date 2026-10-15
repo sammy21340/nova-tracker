@@ -1,8 +1,13 @@
 import { usePortfolio } from "../hooks/usePortfolio";
 import AddHoldingForm from "./AddHoldingForm";
 import HoldingRow from "./HoldingRow";
-import { CURRENCIES, formatMoney } from "../Utils/format";
+import { CURRENCIES, formatMoney } from "../utils/format";
 import "../styles/Portfolio.css";
+import PriceChart from "./PriceChart";
+   <PriceChart
+     coins={holdings.map((h) => ({ id: h.id, symbol: h.symbol }))}
+     currency={currency}
+   />
 
 // Keyed to coinId, not array position — so a coin's color stays
 // the same regardless of what order holdings were added in.

@@ -1,0 +1,128 @@
+.pc {
+  margin-top: 24px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e7e2d9;
+  border-radius: 16px;
+}
+.pc-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.pc-coins,
+.pc-ranges {
+  display: flex;
+  gap: 6px;
+}
+.pc-coins {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.pc-pill {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e7e2d9;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pc-pill:hover {
+  border-color: #111;
+  color: #111;
+}
+.pc-pill[aria-pressed="true"] {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+.pc-headline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.pc-price {
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #111;
+}
+.pc-change {
+  font-size: 14px;
+  font-weight: 500;
+}
+.pc-change.up {
+  color: #15803d;
+}
+.pc-change.down {
+  color: #b91c1c;
+}
+.pc-when {
+  min-height: 18px;
+  margin: 2px 0 12px;
+  font-size: 13px;
+  color: #777;
+}
+.pc-body {
+  aspect-ratio: 600 / 220; /* matches the SVG, so the card doesn't jump while loading */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pc-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: pan-y; /* page still scrolls vertically; horizontal drag scrubs the chart */
+}
+.pc-line {
+  fill: none;
+  stroke: #111;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.pc-area {
+  fill: rgba(17, 17, 17, 0.06);
+  stroke: none;
+}
+.pc-cursor {
+  stroke: #bbb;
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.pc-dot {
+  fill: #111;
+  stroke: #fff;
+  stroke-width: 2;
+}
+.pc-msg {
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: #777;
+}
+.pc-msg .pc-pill {
+  margin-top: 10px;
+}
+.pc-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #777;
+}
+.pc-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #999;
+}

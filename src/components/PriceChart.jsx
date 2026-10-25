@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { usePriceHistory } from "../hooks/usePriceHistory";
-import "./PriceChart.css";
+import "../styles/PriceChart.css";
 
 const RANGES = [
   { label: "1D", days: 1 },

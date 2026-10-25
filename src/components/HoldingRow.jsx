@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { formatMoney } from "../Utils/format";
+import { formatMoney } from "../utils/format";
 
 // One row in the holdings list. It's its own component because each row
 // needs its own "am I being edited?" state — and hooks like useState can't

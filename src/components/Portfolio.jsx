@@ -1,13 +1,9 @@
 import { usePortfolio } from "../hooks/usePortfolio";
 import AddHoldingForm from "./AddHoldingForm";
 import HoldingRow from "./HoldingRow";
+import PriceChart from "./PriceChart";
 import { CURRENCIES, formatMoney } from "../utils/format";
 import "../styles/Portfolio.css";
-import PriceChart from "./PriceChart";
-   <PriceChart
-     coins={holdings.map((h) => ({ id: h.id, symbol: h.symbol }))}
-     currency={currency}
-   />
 
 // Keyed to coinId, not array position — so a coin's color stays
 // the same regardless of what order holdings were added in.
@@ -57,6 +53,14 @@ function Portfolio() {
     colorById[h.coinId] =
       COIN_COLORS[h.coinId] ?? EXTRA_COLORS[extraIndex++ % EXTRA_COLORS.length];
   }
+
+  // One entry per coin for the chart. A Map keyed by coinId drops duplicates
+  // if the same coin was added as more than one holding.
+  const chartCoins = [
+    ...new Map(
+      holdings.map((h) => [h.coinId, { id: h.coinId, symbol: h.symbol }])
+    ).values(),
+  ];
 
   return (
     <div className="portfolio-page">
@@ -129,6 +133,8 @@ function Portfolio() {
           </div>
         )}
       </div>
+
+      <PriceChart coins={chartCoins} currency={currency} />
 
       <AddHoldingForm onAdd={addHolding} currency={currency} />
 

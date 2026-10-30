@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { usePriceHistory } from "../hooks/usePriceHistory";
+import SegmentedControl from "./SegmentedControl";
 import "../styles/PriceChart.css";
 
 const RANGES = [
-  { label: "1D", days: 1 },
-  { label: "7D", days: 7 },
-  { label: "30D", days: 30 },
-  { label: "90D", days: 90 },
+  { label: "1D", value: 1 },
+  { label: "7D", value: 7 },
+  { label: "30D", value: 30 },
+  { label: "90D", value: 90 },
 ];
 
 // The SVG's own coordinate system. CSS scales it to fit the card.
@@ -95,18 +96,12 @@ export default function PriceChart({ coins, currency }) {
             </button>
           ))}
         </div>
-        <div className="pc-ranges">
-          {RANGES.map((r) => (
-            <button
-              key={r.days}
-              className="pc-pill"
-              aria-pressed={r.days === days}
-              onClick={() => setDays(r.days)}
-            >
-              {r.label}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          label="Time range"
+          options={RANGES}
+          value={days}
+          onChange={setDays}
+        />
       </div>
 
       <div className="pc-headline">

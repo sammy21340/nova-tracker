@@ -2,6 +2,7 @@ import { usePortfolio } from "../hooks/usePortfolio";
 import AddHoldingForm from "./AddHoldingForm";
 import HoldingRow from "./HoldingRow";
 import PriceChart from "./PriceChart";
+import SegmentedControl from "./SegmentedControl";
 import { CURRENCIES, formatMoney } from "../utils/format";
 import "../styles/Portfolio.css";
 
@@ -30,6 +31,12 @@ const EXTRA_COLORS = [
   "#7F9A6B",
   "#8C7A66",
 ];
+
+// Built once at load, so the toggle isn't handed a new array on every render.
+const CURRENCY_OPTIONS = CURRENCIES.map((c) => ({
+  value: c,
+  label: c.toUpperCase(),
+}));
 
 function Portfolio() {
   const {
@@ -66,18 +73,12 @@ function Portfolio() {
     <div className="portfolio-page">
       <div className="portfolio-header">
         <h1>Your Portfolio</h1>
-        <div className="currency-toggle" role="group" aria-label="Display currency">
-          {CURRENCIES.map((c) => (
-            <button
-              key={c}
-              type="button"
-              aria-pressed={currency === c}
-              onClick={() => setCurrency(c)}
-            >
-              {c.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          label="Display currency"
+          options={CURRENCY_OPTIONS}
+          value={currency}
+          onChange={setCurrency}
+        />
       </div>
 
       <div className="total-value">

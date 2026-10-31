@@ -1,0 +1,19 @@
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #e7e2d9;
+}
+
+.site-header .brand-name {
+  font-size: 18px;
+}
+
+.site-header-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

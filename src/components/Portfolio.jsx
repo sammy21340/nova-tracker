@@ -3,6 +3,8 @@ import AddHoldingForm from "./AddHoldingForm";
 import HoldingRow from "./HoldingRow";
 import PriceChart from "./PriceChart";
 import SegmentedControl from "./SegmentedControl";
+import Header from "./Header";
+import Footer from "./Footer";
 import { CURRENCIES, formatMoney } from "../utils/format";
 import "../styles/Portfolio.css";
 
@@ -71,14 +73,17 @@ function Portfolio() {
 
   return (
     <div className="portfolio-page">
-      <div className="portfolio-header">
-        <h1>Your Portfolio</h1>
+      <Header>
         <SegmentedControl
           label="Display currency"
           options={CURRENCY_OPTIONS}
           value={currency}
           onChange={setCurrency}
         />
+      </Header>
+
+      <div className="portfolio-header">
+        <h1>Your Portfolio</h1>
       </div>
 
       <div className="total-value">
@@ -153,6 +158,8 @@ function Portfolio() {
           />
         ))}
       </ul>
+
+      <Footer />
     </div>
   );
 }
